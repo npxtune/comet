@@ -18,6 +18,7 @@ import AppTheme from './AppTheme.tsx';
 import ColorModeSelect from './ColorModeSelect.tsx';
 import {useWebSocket} from './WebSocket.tsx';
 import {Mail} from "@mui/icons-material";
+import SignUp from "./SignUp.tsx";
 
 const Card = styled(MuiCard)(({theme}) => ({
     display: 'flex',
@@ -72,16 +73,17 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
     const [loginError] = React.useState(false);
     const [loginErrorMsg] = React.useState('');
-    const [open, setOpen] = React.useState(false);
+    const [openForPas, setOpenForPas] = React.useState(false);
+    const [openSignUp, setSignUp] = React.useState(false);
 
     const {sendMessage} = useWebSocket();
 
-    const handleClickOpen = () => {
+    const handleClickOpen = (setOpen: React.Dispatch<React.SetStateAction<boolean>>) => {
         setOpen(true);
     };
 
-    const handleClose = () => {
-        setOpen(false);
+    const handleClose = (setClosed: React.Dispatch<React.SetStateAction<boolean>>) => {
+        setClosed(false);
     };
 
     const handleLogIn = (userinfo: string) => {
@@ -185,7 +187,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                                 <FormLabel htmlFor="password">Password</FormLabel>
                                 <Link
                                     component="button"
-                                    onClick={handleClickOpen}
+                                    onClick={() => handleClickOpen(setOpenForPas)}
                                     variant="body2"
                                     sx={{alignSelf: 'baseline'}}
                                 >
@@ -196,7 +198,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                                 error={passwordError || loginError}
                                 helperText={passwordErrorMessage || loginErrorMsg}
                                 name="password"
-                                placeholder="••••••"
+                                placeholder="••••••••"
                                 type="password"
                                 id="password"
                                 autoComplete="current-password"
@@ -211,7 +213,8 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                             control={<Checkbox value="remember" color="primary"/>}
                             label="Remember me"
                         />
-                        <ForgotPassword open={open} handleClose={handleClose}/>
+                        <ForgotPassword open={openForPas} handleClose={() => handleClose(setOpenForPas)}/>
+                        <SignUp open={openSignUp} handleClose={() => handleClose(setSignUp)}/>
                         <Button
                             type="submit"
                             fullWidth
@@ -223,13 +226,14 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                         <Typography sx={{textAlign: 'center'}}>
                             Don&apos;t have an account?{' '}
                             <span>
-                <Link
-                    href="https://youtu.be/dQw4w9WgXcQ?si=MkHsvnqKIsMOV6KG"
-                    variant="body2"
-                    sx={{alignSelf: 'center'}}
-                >
-                  Sign up
-                </Link>
+                                <Link
+                                    component="button"
+                                    onClick={() => handleClickOpen(setSignUp)}
+                                    variant="body2"
+                                    sx={{alignSelf: 'baseline'}}
+                                >
+                                    Sign Up
+                                </Link>
               </span>
                         </Typography>
                     </Box>
