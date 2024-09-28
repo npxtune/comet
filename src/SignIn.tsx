@@ -71,8 +71,8 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
     const [passwordError, setPasswordError] = React.useState(false);
     const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
-    const [loginError, setLoginError] = React.useState(false);
-    const [loginErrorMsg, setLoginErrorMsg] = React.useState('');
+    const [loginError] = React.useState(false);
+    const [loginErrorMsg] = React.useState('');
     const [openForPas, setOpenForPas] = React.useState(false);
     const [openSignUp, setSignUp] = React.useState(false);
 
