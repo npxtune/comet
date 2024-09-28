@@ -26,6 +26,9 @@ importers:
       '@tauri-apps/plugin-shell':
         specifier: '>=2.0.0-rc.0'
         version: 2.0.0-rc.1
+      '@tauri-apps/plugin-websocket':
+        specifier: 2.0.0-rc.1
+        version: 2.0.0-rc.1
       '@tauri-apps/plugin-window-state':
         specifier: ^2.0.0-rc
         version: 2.0.0-rc.1
@@ -613,6 +616,9 @@ packages:
 
   '@tauri-apps/plugin-shell@2.0.0-rc.1':
     resolution: {integrity: sha512-JtNROc0rqEwN/g93ig5pK4cl1vUo2yn+osCpY9de64cy/d9hRzof7AuYOgvt/Xcd5VPQmlgo2AGvUh5sQRSR1A==}
+
+  '@tauri-apps/plugin-websocket@2.0.0-rc.1':
+    resolution: {integrity: sha512-TPLKdDQS2aS7TaYdW5lzNiKCapTc9OKJaKAJKZu+waGyHMWCx5otKCeZyEQNlc1B3QMTwXyu8S4TPjRowl2qOQ==}
 
   '@tauri-apps/plugin-window-state@2.0.0-rc.1':
     resolution: {integrity: sha512-fQG6G6G+b3mx2QE6dAFxl3iyKvz35DpGggIczKn+qRc4Mdjsb9y42iJMUpMpZAC2q9j8h3LfknguCacifVP5lA==}
@@ -1461,6 +1467,10 @@ snapshots:
       '@tauri-apps/cli-win32-x64-msvc': 2.0.0-rc.16
 
   '@tauri-apps/plugin-shell@2.0.0-rc.1':
+    dependencies:
+      '@tauri-apps/api': 2.0.0-rc.5
+
+  '@tauri-apps/plugin-websocket@2.0.0-rc.1':
     dependencies:
       '@tauri-apps/api': 2.0.0-rc.5
 

@@ -1,6 +1,6 @@
 use tauri::{AppHandle, Manager, TitleBarStyle, WebviewUrl, WebviewWindowBuilder};
+use tauri_plugin_window_state::{AppHandleExt, StateFlags, WindowExt};
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
-use tauri_plugin_window_state::{AppHandleExt, WindowExt, StateFlags};
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -10,6 +10,7 @@ fn greet(name: &str) -> String {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_websocket::init())
         .plugin(tauri_plugin_window_state::Builder::new().build())
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![greet])
@@ -17,7 +18,7 @@ pub fn run() {
             let win_builder = WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
                 .title("Comet")
                 .inner_size(800.0, 600.0);
-                // .transparent(true);
+            // .transparent(true);
 
             //  Windows Blur
             #[cfg(target_os = "windows")]
@@ -26,7 +27,9 @@ pub fn run() {
                 let window = win_builder.build().unwrap();
                 apply_blur(&window, Some((18, 18, 18, 125)))
                     .expect("Unsupported platform! 'apply_blur' is only supported on Windows");
-                window.restore_state(StateFlags::all()).expect("TODO: panic message");
+                window
+                    .restore_state(StateFlags::all())
+                    .expect("TODO: panic message");
             }
 
             //  MacOS Blur
@@ -46,7 +49,9 @@ pub fn run() {
                     ns_window.setTitleVisibility_(NSWindowTitleVisibility::NSWindowTitleVisible);
                     ns_window.setTitlebarAppearsTransparent_(cocoa::base::YES);
                 }
-                window.restore_state(StateFlags::all()).expect("TODO: panic message");
+                window
+                    .restore_state(StateFlags::all())
+                    .expect("TODO: panic message");
                 Ok(())
             }
         })
@@ -56,6 +61,7 @@ pub fn run() {
 
 #[tauri::command]
 fn close_app(app: AppHandle) {
-    app.save_window_state(StateFlags::all()).expect("TODO: panic message");
+    app.save_window_state(StateFlags::all())
+        .expect("TODO: panic message");
     app.exit(0);
 }

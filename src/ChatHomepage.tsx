@@ -2,9 +2,10 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
-import { styled } from '@mui/material/styles';
+import {styled} from '@mui/material/styles';
 import AppTheme from './AppTheme.tsx';
 import ChatSettings from "./ChatSettings.tsx";
+import WebSocket from '@tauri-apps/plugin-websocket';
 import SignIn from './SignIn.tsx';
 import MuiCard from "@mui/material/Card";
 import ColorModeSelect from "./ColorModeSelect.tsx";
@@ -26,22 +27,21 @@ import {ChatBubble, Logout, Send, Settings} from "@mui/icons-material";
 import ForgotPassword from "./ForgotPassword.tsx";
 import {useNavigate} from "react-router-dom"; // Import the SignIn component
 
-
-const ChatArea = styled(Box)(({ theme }) => ({
+const ChatArea = styled(Box)(({theme}) => ({
     flexGrow: 1,
     display: 'flex',
     flexDirection: 'column',
     padding: theme.spacing(2),
 }));
 
-const MessageInput = styled(Box)(({ theme }) => ({
+const MessageInput = styled(Box)(({theme}) => ({
     display: 'flex',
     alignItems: 'center',
     borderTop: `1px solid ${theme.palette.divider}`,
     padding: theme.spacing(1),
 }));
 
-const MessageList = styled(Box)(({ theme }) => ({
+const MessageList = styled(Box)(({theme}) => ({
     flexGrow: 1,
     overflowY: 'auto',
     padding: theme.spacing(1),
@@ -52,7 +52,7 @@ const MessageList = styled(Box)(({ theme }) => ({
 //     return (<Typography style="margin">{children}</Typography>);
 // });
 
-const Sidebar = styled(Box)(({ theme }) => ({
+const Sidebar = styled(Box)(({theme}) => ({
     width: '250px', // Fixed width for the sidebar
     borderRight: `1px solid ${theme.palette.divider}`,
     display: 'flex',
@@ -60,14 +60,14 @@ const Sidebar = styled(Box)(({ theme }) => ({
     padding: theme.spacing(2)
 }));
 
-const SettingsButtonContainer = styled(Box)(({ theme }) => ({
+const SettingsButtonContainer = styled(Box)(({theme}) => ({
     display: 'flex',
     justifyContent: 'center',
     padding: theme.spacing(1),
     marginTop: 'auto',
 }));
 
-const ChatContainer = styled(Stack)(({ theme }) => ({
+const ChatContainer = styled(Stack)(({theme}) => ({
     display: 'flex',
     flexDirection: 'row',
     height: '100vh',
@@ -89,13 +89,14 @@ const ChatContainer = styled(Stack)(({ theme }) => ({
 
 export default function ChatHomePage() {
     const [messages, setMessages] = React.useState([
-        { id: 1, text: 'Hello! How are you?' },
-        { id: 2, text: 'I’m good, thanks! What about you?' },
+        {id: 1, text: 'Hello! How are you?'},
+        {id: 2, text: 'I’m good, thanks! What about you?'},
     ]);
     const [newMessage, setNewMessage] = React.useState('');
     const [open, setOpen] = React.useState(false);
     const navigate = useNavigate();
 
+    let ws: WebSocket;
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -105,60 +106,76 @@ export default function ChatHomePage() {
         setOpen(false);
     };
 
+    const handleLogIn = async () => {
+        console.log("Trying to log-in...");
+        ws = await WebSocket.connect('ws://192.168.80.222:5007/ws');
+
+        ws.addListener((msg) => {
+            console.log('Received Message:', msg);
+        });
+
+        // Step 3: Send a message to the server
+        await ws.send('{"UserLoginRequest": {"username": "xy", "password": "yz"}}');
+    };
+
     const handleLogOut = () => {
+        console.log("Disconnecting client...");
+        if (ws != null) {
+            ws.disconnect();
+        }
         navigate('/', {replace: true});
     };
 
     const handleSendMessage = () => {
         if (newMessage.trim()) {
-            setMessages([...messages, { id: messages.length + 1, text: newMessage }]);
+            setMessages([...messages, {id: messages.length + 1, text: newMessage}]);
             setNewMessage('');
         }
     };
 
     return (
         <AppTheme>
-            <CssBaseline enableColorScheme />
+            <CssBaseline enableColorScheme/>
             <ChatContainer>
                 {/* Sidebar */}
                 <Sidebar marginTop={2}>
-                    <Typography variant="h6" component="div" sx={{ mb: 2 }}>
+                    <Typography variant="h6" component="div" sx={{mb: 2}}>
                         Chats
                     </Typography>
                     <List>
                         <ListItem key="1" disablePadding>
                             <ListItemButton>
                                 <ListItemIcon>
-                                    <ChatBubble />
+                                    <ChatBubble/>
                                 </ListItemIcon>
-                                <ListItemText primary="Chat 1" />
+                                <ListItemText primary="Chat 1"/>
                             </ListItemButton>
                         </ListItem>
                         <ListItem key="2" disablePadding>
                             <ListItemButton>
                                 <ListItemIcon>
-                                    <ChatBubble />
+                                    <ChatBubble/>
                                 </ListItemIcon>
-                                <ListItemText primary="Chat 2" />
+                                <ListItemText primary="Chat 2"/>
                             </ListItemButton>
                         </ListItem>
                         <ListItem key="3" disablePadding>
                             <ListItemButton>
                                 <ListItemIcon>
-                                    <ChatBubble />
+                                    <ChatBubble/>
                                 </ListItemIcon>
-                                <ListItemText primary="Chat 3" />
+                                <ListItemText primary="Chat 3"/>
                             </ListItemButton>
                         </ListItem>
                     </List>
                     <SettingsButtonContainer>
-                        <Button variant="outlined" sx={{ marginLeft: 1 }} onClick={handleClickOpen}>
-                            <Settings />
+                        <Button variant="outlined" sx={{marginLeft: 1}} onClick={handleClickOpen}>
+                            <Settings/>
                         </Button>
                         <ChatSettings open={open} handleClose={handleClose}/>
-                        <Box sx={{ marginLeft: 2, marginRight: 2 }}/>
-                        <Button variant="outlined" sx={{ marginLeft: 1, color: 'red' }} onClick={handleLogOut}>
-                            <Logout />
+                        <Box sx={{marginLeft: 2, marginRight: 2}}/>
+                        <Button variant="outlined" sx={{marginLeft: 1, color: 'red'}} onClick={handleLogOut}>
+                            <Logout/>
                         </Button>
                     </SettingsButtonContainer>
                 </Sidebar>
@@ -167,15 +184,16 @@ export default function ChatHomePage() {
                 <ChatArea>
                     <AppBar position="static">
                         <Toolbar>
-                            <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: (theme) => theme.palette.text.primary }}>
+                            <Typography variant="h6" component="div"
+                                        sx={{flexGrow: 1, color: (theme) => theme.palette.text.primary}}>
                                 Chat Room
                             </Typography>
                         </Toolbar>
                     </AppBar>
                     <MessageList>
-                       <Typography>
-                           Hello, World! :)
-                       </Typography>
+                        <Typography>
+                            Hello, World! :)
+                        </Typography>
                     </MessageList>
                     <MessageInput>
                         <TextField
@@ -186,8 +204,8 @@ export default function ChatHomePage() {
                             variant="outlined" // Added variant for consistency
                             fullWidth
                         />
-                        <Button variant="contained" onClick={handleSendMessage} sx={{ marginLeft: 1 }}>
-                            <Send />
+                        <Button variant="contained" onClick={handleLogIn} sx={{marginLeft: 1}}>
+                            <Send/>
                         </Button>
                     </MessageInput>
                 </ChatArea>
