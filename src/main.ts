@@ -13,9 +13,9 @@ async function greet() {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  greetInputEl = document.querySelector("#greet-input");
+  greetInputEl = document.querySelector("#name-input");
   greetMsgEl = document.querySelector("#greet-msg");
-  document.querySelector("#greet-form")?.addEventListener("submit", (e) => {
+  document.querySelector("#greet-input")?.addEventListener("submit", (e) => {
     e.preventDefault();
     greet();
   });

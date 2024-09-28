@@ -11,12 +11,9 @@
   },
   "app": {
     "withGlobalTauri": true,
+    "macOSPrivateApi": true,
     "windows": [
-      {
-        "title": "comet",
-        "width": 800,
-        "height": 600
-      }
+
     ],
     "security": {
       "csp": null
