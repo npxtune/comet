@@ -1,5 +1,4 @@
-use tauri::{AppHandle, Manager, TitleBarStyle, WebviewUrl, WebviewWindowBuilder};
-use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
+use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindowBuilder};
 use tauri_plugin_window_state::{AppHandleExt, WindowExt, StateFlags};
 
 #[tauri::command]
@@ -22,11 +21,25 @@ pub fn run() {
             //  Windows Blur
             #[cfg(target_os = "windows")]
             {
+                use tauri::{TitleBarStyle};
                 let win_builder = win_builder.title_bar_style(TitleBarStyle::Transparent);
-                let window = win_builder.build().unwrap();
+            }
+
+            //  MacOS Blur
+            #[cfg(target_os = "macos")]
+            {
+                use tauri::{TitleBarStyle};
+                let win_builder = win_builder.title_bar_style(TitleBarStyle::Transparent);
+            }
+
+            let window = win_builder.build().unwrap();
+
+            //  Windows Blur
+            #[cfg(target_os = "windows")]
+            {
+                let win_builder = win_builder.title_bar_style(TitleBarStyle::Transparent);
                 apply_blur(&window, Some((18, 18, 18, 125)))
                     .expect("Unsupported platform! 'apply_blur' is only supported on Windows");
-                window.restore_state(StateFlags::all()).expect("TODO: panic message");
             }
 
             //  MacOS Blur
@@ -34,8 +47,7 @@ pub fn run() {
             {
                 use cocoa::appkit::{NSWindow, NSWindowStyleMask, NSWindowTitleVisibility};
                 use cocoa::base::id;
-                let win_builder = win_builder.title_bar_style(TitleBarStyle::Transparent);
-                let window = win_builder.build().unwrap();
+                use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
                 apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, None)
                     .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
                 let ns_window = window.ns_window().unwrap() as id;
@@ -46,9 +58,10 @@ pub fn run() {
                     ns_window.setTitleVisibility_(NSWindowTitleVisibility::NSWindowTitleVisible);
                     ns_window.setTitlebarAppearsTransparent_(cocoa::base::YES);
                 }
-                window.restore_state(StateFlags::all()).expect("TODO: panic message");
-                Ok(())
             }
+
+            window.restore_state(StateFlags::VISIBLE).expect("TODO: panic message");
+            Ok(())
         })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
