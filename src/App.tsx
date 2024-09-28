@@ -1,25 +1,32 @@
-// src/App.tsx
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-
-// Example pages
-const Login = () => <h2>Login Page</h2>;
-const Homepage = () => <h2>Homepage</h2>;
-const Chat = () => <h2>Chat Page</h2>;
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import SignIn from './SignIn';
+import ChatHomePage from "./ChatHomepage.tsx";
+// import { blue } from '@mui/material/colors';
+// import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 function App() {
+
+
+    // const theme = createTheme({
+    //     palette: {
+    //         primary: {
+    //             main: blue[500],
+    //         },
+    //         background: {
+    //             default: 'transparent',
+    //         },
+    //     },
+    // });
+
     return (
-        <Router>
-            <nav>
-                <Link to="/">Login</Link>
-                <Link to="/homepage">Homepage</Link>
-                <Link to="/chat">Chat</Link>
-            </nav>
-            <Routes>
-                <Route path="/" element={<Login />} />
-                <Route path="/homepage" element={<Homepage />} />
-                <Route path="/chat" element={<Chat />} />
-            </Routes>
-        </Router>
+        // <ThemeProvider theme={theme}>
+            <Router>
+                <Routes>
+                    <Route path="/" element={<SignIn />} /> {/* Set SignIn as the main page */}
+                    <Route path="chat" element={<ChatHomePage />} />
+                </Routes>
+            </Router>
+        // </ThemeProvider>
     );
 }
 

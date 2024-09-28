@@ -1,12 +1,13 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client'; // Note the '/client' here for React 18
+import ReactDOM from 'react-dom/client';
 import App from './App';
+import CssBaseline from "@mui/material/CssBaseline";
 
-// Create a root.
 const root = ReactDOM.createRoot(document.getElementById('root')!); // Use non-null assertion (!)
 
 root.render(
     <React.StrictMode>
+        <CssBaseline />
         <App />
     </React.StrictMode>
 );

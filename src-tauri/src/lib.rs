@@ -16,8 +16,8 @@ pub fn run() {
         .setup(|app| {
             let win_builder = WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
                 .title("Comet")
-                .inner_size(800.0, 600.0)
-                .transparent(true);
+                .inner_size(800.0, 600.0);
+                // .transparent(true);
 
             //  Windows Blur
             #[cfg(target_os = "windows")]
