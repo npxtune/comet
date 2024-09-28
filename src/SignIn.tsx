@@ -14,10 +14,10 @@ import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import {styled} from '@mui/material/styles';
 import ForgotPassword from './ForgotPassword';
-import {GoogleIcon, FacebookIcon, SitemarkIcon} from './CustomIcons';
+import {GoogleIcon, FacebookIcon} from './CustomIcons';
 import AppTheme from './AppTheme.tsx';
 import ColorModeSelect from './ColorModeSelect.tsx';
-import {useNavigate} from "react-router-dom";
+// import {useNavigate} from "react-router-dom";
 import WebSocket from "@tauri-apps/plugin-websocket";
 
 const Card = styled(MuiCard)(({theme}) => ({
@@ -67,7 +67,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     const [loginErrorMsg, setLoginErrorMsg] = React.useState('');
     const [open, setOpen] = React.useState(false);
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     let ws: WebSocket;
 
@@ -109,6 +109,8 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                     console.log('Login was not successful');
                     setLoginError(true);
                     setLoginErrorMsg('Could not log in.');
+                    console.log("Disconnecting from server.")
+                    ws.disconnect();
                 } else {
                     console.log('Login was successful');
                     setLoginError(false);
@@ -153,7 +155,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         //     navigate('/chat', {replace: true});
         // }
         // navigate('/chat', {replace: true});
-        return true;
+        return isValid;
     };
 
     return (
