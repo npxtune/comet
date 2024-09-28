@@ -7,7 +7,7 @@ const root = ReactDOM.createRoot(document.getElementById('root')!); // Use non-n
 
 root.render(
     <React.StrictMode>
-        <CssBaseline />
-        <App />
+        <CssBaseline/>
+        <App/>
     </React.StrictMode>
 );
