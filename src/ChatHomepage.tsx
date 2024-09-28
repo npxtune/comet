@@ -4,6 +4,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import AppTheme from './AppTheme.tsx';
+import ChatSettings from "./ChatSettings.tsx";
 import SignIn from './SignIn.tsx';
 import MuiCard from "@mui/material/Card";
 import ColorModeSelect from "./ColorModeSelect.tsx";
@@ -21,17 +22,12 @@ import {
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import {ChatBubble, Send} from "@mui/icons-material"; // Import the SignIn component
+import {ChatBubble, Logout, Send, Settings} from "@mui/icons-material";
+import ForgotPassword from "./ForgotPassword.tsx";
+import {useNavigate} from "react-router-dom"; // Import the SignIn component
 
 
 const ChatArea = styled(Box)(({ theme }) => ({
-    flexGrow: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    padding: theme.spacing(2),
-}));
-
-const ChatName = styled(Toolbar)(({ theme }) => ({
     flexGrow: 1,
     display: 'flex',
     flexDirection: 'column',
@@ -61,7 +57,14 @@ const Sidebar = styled(Box)(({ theme }) => ({
     borderRight: `1px solid ${theme.palette.divider}`,
     display: 'flex',
     flexDirection: 'column',
-    padding: theme.spacing(2),
+    padding: theme.spacing(2)
+}));
+
+const SettingsButtonContainer = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    justifyContent: 'center',
+    padding: theme.spacing(1),
+    marginTop: 'auto',
 }));
 
 const ChatContainer = styled(Stack)(({ theme }) => ({
@@ -90,6 +93,21 @@ export default function ChatHomePage() {
         { id: 2, text: 'I’m good, thanks! What about you?' },
     ]);
     const [newMessage, setNewMessage] = React.useState('');
+    const [open, setOpen] = React.useState(false);
+    const navigate = useNavigate();
+
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleLogOut = () => {
+        navigate('/', {replace: true});
+    };
 
     const handleSendMessage = () => {
         if (newMessage.trim()) {
@@ -101,7 +119,6 @@ export default function ChatHomePage() {
     return (
         <AppTheme>
             <CssBaseline enableColorScheme />
-            <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem', zIndex: '10'}} />
             <ChatContainer>
                 {/* Sidebar */}
                 <Sidebar marginTop={2}>
@@ -134,22 +151,32 @@ export default function ChatHomePage() {
                             </ListItemButton>
                         </ListItem>
                     </List>
+                    <SettingsButtonContainer>
+                        <Button variant="outlined" sx={{ marginLeft: 1 }} onClick={handleClickOpen}>
+                            <Settings />
+                        </Button>
+                        <ChatSettings open={open} handleClose={handleClose}/>
+                        <Box sx={{ marginLeft: 2, marginRight: 2 }}/>
+                        <Button variant="outlined" sx={{ marginLeft: 1, color: 'red' }} onClick={handleLogOut}>
+                            <Logout />
+                        </Button>
+                    </SettingsButtonContainer>
                 </Sidebar>
 
                 {/* Chat Area */}
                 <ChatArea>
                     <AppBar position="static">
-                        <ChatName>
-                            <Typography variant="h6" component="div" sx={{ mb: 2 }}>
+                        <Toolbar>
+                            <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: (theme) => theme.palette.text.primary }}>
                                 Chat Room
                             </Typography>
-                        </ChatName>
+                        </Toolbar>
                     </AppBar>
-                    {/*<MessageList>*/}
-                    {/*   /!*{messages.map((msg) => (*!/*/}
-                    {/*   /!*    <Message key={msg.id}>{msg.text}</Message>*!/*/}
-                    {/*   /!*))}*!/*/}
-                    {/*</MessageList>*/}
+                    <MessageList>
+                       <Typography>
+                           Hello, World! :)
+                       </Typography>
+                    </MessageList>
                     <MessageInput>
                         <TextField
                             type="text"

@@ -82,37 +82,36 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             email: data.get('email'),
             password: data.get('password'),
         });
-        navigate('/chat', {replace: true});
     };
 
     const validateInputs = () => {
-        // const email = document.getElementById('email') as HTMLInputElement;
-        // const password = document.getElementById('password') as HTMLInputElement;
-        //
-        // let isValid = true;
-        //
-        // if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-        //   setEmailError(true);
-        //   setEmailErrorMessage('Please enter a valid email address.');
-        //   isValid = false;
-        // } else {
-        //   setEmailError(false);
-        //   setEmailErrorMessage('');
-        // }
-        //
-        // if (!password.value || password.value.length < 6) {
-        //   setPasswordError(true);
-        //   setPasswordErrorMessage('Password must be at least 6 characters long.');
-        //   isValid = false;
-        // } else {
-        //   setPasswordError(false);
-        //   setPasswordErrorMessage('');
-        // }
-        //
-        // return isValid;
-        return true;
+        const email = document.getElementById('email') as HTMLInputElement;
+        const password = document.getElementById('password') as HTMLInputElement;
 
+        let isValid = true;
 
+        if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+          setEmailError(true);
+          setEmailErrorMessage('Please enter a valid email address.');
+          isValid = false;
+        } else {
+          setEmailError(false);
+          setEmailErrorMessage('');
+        }
+
+        if (!password.value || password.value.length < 6) {
+          setPasswordError(true);
+          setPasswordErrorMessage('Password must be at least 6 characters long.');
+          isValid = false;
+        } else {
+          setPasswordError(false);
+          setPasswordErrorMessage('');
+        }
+
+        if (isValid) {
+            navigate('/chat', {replace: true});
+        }
+        return isValid;
     };
 
     return (
@@ -202,7 +201,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                             Don&apos;t have an account?{' '}
                             <span>
                 <Link
-                    href="/material-ui/getting-started/templates/sign-in/"
+                    href="https://youtu.be/dQw4w9WgXcQ?si=MkHsvnqKIsMOV6KG"
                     variant="body2"
                     sx={{alignSelf: 'center'}}
                 >
