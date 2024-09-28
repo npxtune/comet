@@ -6,15 +6,10 @@ import {styled} from '@mui/material/styles';
 import AppTheme from './AppTheme.tsx';
 import ChatSettings from "./ChatSettings.tsx";
 import WebSocket from '@tauri-apps/plugin-websocket';
-import SignIn from './SignIn.tsx';
-import MuiCard from "@mui/material/Card";
-import ColorModeSelect from "./ColorModeSelect.tsx";
 import Stack from "@mui/material/Stack";
 import {
     AppBar,
-    Container,
-    Drawer,
-    Icon, List,
+    List,
     ListItem,
     ListItemButton,
     ListItemIcon,
@@ -24,8 +19,7 @@ import {
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import {ChatBubble, Logout, Send, Settings} from "@mui/icons-material";
-import ForgotPassword from "./ForgotPassword.tsx";
-import {useNavigate} from "react-router-dom"; // Import the SignIn component
+import {useNavigate} from "react-router-dom";
 
 const ChatArea = styled(Box)(({theme}) => ({
     flexGrow: 1,
@@ -88,10 +82,10 @@ const ChatContainer = styled(Stack)(({theme}) => ({
 }));
 
 export default function ChatHomePage() {
-    const [messages, setMessages] = React.useState([
-        {id: 1, text: 'Hello! How are you?'},
-        {id: 2, text: 'I’m good, thanks! What about you?'},
-    ]);
+    // const [messages, setMessages] = React.useState([
+    //     {id: 1, text: 'Hello! How are you?'},
+    //     {id: 2, text: 'I’m good, thanks! What about you?'},
+    // ]);
     const [newMessage, setNewMessage] = React.useState('');
     const [open, setOpen] = React.useState(false);
     const navigate = useNavigate();
@@ -126,12 +120,12 @@ export default function ChatHomePage() {
         navigate('/', {replace: true});
     };
 
-    const handleSendMessage = () => {
-        if (newMessage.trim()) {
-            setMessages([...messages, {id: messages.length + 1, text: newMessage}]);
-            setNewMessage('');
-        }
-    };
+    // const handleSendMessage = () => {
+    //     if (newMessage.trim()) {
+    //         setMessages([...messages, {id: messages.length + 1, text: newMessage}]);
+    //         setNewMessage('');
+    //     }
+    // };
 
     return (
         <AppTheme>
