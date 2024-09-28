@@ -5,8 +5,14 @@
     "windows",
     "linux"
   ],
+  "windows": ["main"],
+  "remote": {
+    "urls": ["ws://192.168.80.222:5007"]
+  },
   "permissions": [
     "window-state:allow-restore-state",
-    "window-state:allow-save-window-state"
+    "window-state:allow-save-window-state",
+    "websocket:allow-connect",
+    "websocket:allow-send"
   ]
 }
