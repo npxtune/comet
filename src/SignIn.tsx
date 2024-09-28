@@ -18,6 +18,7 @@ import {GoogleIcon, FacebookIcon, SitemarkIcon} from './CustomIcons';
 import AppTheme from './AppTheme.tsx';
 import ColorModeSelect from './ColorModeSelect.tsx';
 import {useNavigate} from "react-router-dom";
+import WebSocket from "@tauri-apps/plugin-websocket";
 
 const Card = styled(MuiCard)(({theme}) => ({
     display: 'flex',
@@ -62,9 +63,13 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
     const [passwordError, setPasswordError] = React.useState(false);
     const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
+    const [loginError, setLoginError] = React.useState(false);
+    const [loginErrorMsg, setLoginErrorMsg] = React.useState('');
     const [open, setOpen] = React.useState(false);
 
     const navigate = useNavigate();
+
+    let ws: WebSocket;
 
 
     const handleClickOpen = () => {
@@ -79,40 +84,76 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         console.log({
-            email: data.get('email'),
+            username: data.get('username'),
             password: data.get('password'),
         });
+        let username = data.get('username');
+        let password = data.get('password');
+
+        let userinfo: string = '"username":"' + username + '","password":"' + password + '"';
+        handleLogIn(userinfo);
+    };
+
+    const handleLogIn = async (userinfo: string) => {
+        console.log("Trying to log-in: ", userinfo);
+        ws = await WebSocket.connect('ws://192.168.80.222:5007/ws');
+
+        ws.addListener((msg) => {
+            console.log('Received Message:', msg);
+            try {
+                // Parse the JSON string received
+                const parsedData = JSON.parse(msg.data as string);
+
+                // Check if the login was not successful
+                if (parsedData.Success === false) {
+                    console.log('Login was not successful');
+                    setLoginError(true);
+                    setLoginErrorMsg('Could not log in.');
+                } else {
+                    console.log('Login was successful');
+                    setLoginError(false);
+                    setLoginErrorMsg('');
+                }
+            } catch (error) {
+                console.error('Failed to parse JSON message:', error);
+            }
+        });
+
+        // Step 3: Send a message to the server
+        let message = '{"UserLoginRequest":{' + userinfo + '}}';
+        console.log(message);
+        await ws.send(message);
     };
 
     const validateInputs = () => {
-        // const email = document.getElementById('email') as HTMLInputElement;
-        // const password = document.getElementById('password') as HTMLInputElement;
-        //
-        // let isValid = true;
-        //
-        // if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-        //   setEmailError(true);
-        //   setEmailErrorMessage('Please enter a valid email address.');
-        //   isValid = false;
-        // } else {
-        //   setEmailError(false);
-        //   setEmailErrorMessage('');
-        // }
-        //
-        // if (!password.value || password.value.length < 6) {
-        //   setPasswordError(true);
-        //   setPasswordErrorMessage('Password must be at least 6 characters long.');
-        //   isValid = false;
-        // } else {
-        //   setPasswordError(false);
-        //   setPasswordErrorMessage('');
-        // }
-        //
+        const username = document.getElementById('username') as HTMLInputElement;
+        const password = document.getElementById('password') as HTMLInputElement;
+
+        let isValid = true;
+
+        if (!username.value) {
+          setEmailError(true);
+          setEmailErrorMessage('Please enter a valid username.');
+          isValid = false;
+        } else {
+          setEmailError(false);
+          setEmailErrorMessage('');
+        }
+
+        if (!password.value || password.value.length < 6) {
+          setPasswordError(true);
+          setPasswordErrorMessage('Password must be at least 6 characters long.');
+          isValid = false;
+        } else {
+          setPasswordError(false);
+          setPasswordErrorMessage('');
+        }
+
         // if (isValid) {
         //     navigate('/chat', {replace: true});
         // }
-        navigate('/chat', {replace: true});
-        // return isValid;
+        // navigate('/chat', {replace: true});
+        return true;
     };
 
     return (
@@ -141,21 +182,21 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                         }}
                     >
                         <FormControl>
-                            <FormLabel htmlFor="email">Email</FormLabel>
+                            <FormLabel htmlFor="username">Username</FormLabel>
                             <TextField
                                 error={emailError}
                                 helperText={emailErrorMessage}
-                                id="email"
-                                type="email"
-                                name="email"
-                                placeholder="your@email.com"
-                                autoComplete="email"
+                                id="username"
+                                type="username"
+                                name="username"
+                                placeholder=""
+                                autoComplete="username"
                                 autoFocus
                                 required
                                 fullWidth
                                 variant="outlined"
                                 color={emailError ? 'error' : 'primary'}
-                                sx={{ariaLabel: 'email'}}
+                                sx={{ariaLabel: 'username'}}
                             />
                         </FormControl>
                         <FormControl>
@@ -171,8 +212,8 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                                 </Link>
                             </Box>
                             <TextField
-                                error={passwordError}
-                                helperText={passwordErrorMessage}
+                                error={passwordError || loginError}
+                                helperText={passwordErrorMessage || loginErrorMsg}
                                 name="password"
                                 placeholder="••••••"
                                 type="password"
@@ -182,7 +223,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                                 required
                                 fullWidth
                                 variant="outlined"
-                                color={passwordError ? 'error' : 'primary'}
+                                color={passwordError || loginError ? 'error' : 'primary'}
                             />
                         </FormControl>
                         <FormControlLabel
