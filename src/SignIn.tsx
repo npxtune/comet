@@ -20,7 +20,7 @@ import ColorModeSelect from './ColorModeSelect.tsx';
 // import {useNavigate} from "react-router-dom";
 import WebSocket from "@tauri-apps/plugin-websocket";
 
-const Card = styled(MuiCard)(({theme}) => ({
+const Card = styled(MuiCard)(({ theme }) => ({
     display: 'flex',
     flexDirection: 'column',
     alignSelf: 'center',
@@ -31,6 +31,9 @@ const Card = styled(MuiCard)(({theme}) => ({
     [theme.breakpoints.up('sm')]: {
         maxWidth: '450px',
     },
+    [theme.breakpoints.down('sm')]: {
+        padding: theme.spacing(2),  // Reduce padding on small screens
+    },
     boxShadow:
         'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
     ...theme.applyStyles('dark', {
@@ -39,9 +42,14 @@ const Card = styled(MuiCard)(({theme}) => ({
     }),
 }));
 
-const SignInContainer = styled(Stack)(({theme}) => ({
-    padding: 20,
-    marginTop: '10vh',
+
+const SignInContainer = styled(Stack)(({ theme }) => ({
+    padding: '20px',
+    minHeight: '100vh',
+    height: '100%',
+    justifyContent: 'center',
+    overflowY: 'auto',
+    position: 'relative',
     '&::before': {
         content: '""',
         display: 'block',
