@@ -1,3 +1,15 @@
+/* Hide scrollbars */
 body {
-    background-color: black;
+    overflow: hidden; /* This will hide all scrollbars */
+}
+
+/* If you want to hide overflow in a specific container */
+.container {
+    overflow: hidden; /* This will hide scrollbars for this container */
+}
+
+/* To control overflow but allow scrolling if needed */
+.container {
+    overflow-y: auto; /* Allows vertical scrolling if content exceeds the height */
+    overflow-x: hidden; /* Hides horizontal scrollbar */
 }
