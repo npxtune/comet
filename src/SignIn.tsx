@@ -14,13 +14,12 @@ import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import {styled} from '@mui/material/styles';
 import ForgotPassword from './ForgotPassword';
-import {GoogleIcon, FacebookIcon} from './CustomIcons';
 import AppTheme from './AppTheme.tsx';
 import ColorModeSelect from './ColorModeSelect.tsx';
-// import {useNavigate} from "react-router-dom";
-import WebSocket from "@tauri-apps/plugin-websocket";
+import {useWebSocket} from './WebSocket.tsx';
+import {Mail} from "@mui/icons-material";
 
-const Card = styled(MuiCard)(({ theme }) => ({
+const Card = styled(MuiCard)(({theme}) => ({
     display: 'flex',
     flexDirection: 'column',
     alignSelf: 'center',
@@ -43,7 +42,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
 }));
 
 
-const SignInContainer = styled(Stack)(({ theme }) => ({
+const SignInContainer = styled(Stack)(({theme}) => ({
     padding: '20px',
     minHeight: '100vh',
     height: '100%',
@@ -71,14 +70,11 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
     const [passwordError, setPasswordError] = React.useState(false);
     const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
-    const [loginError, setLoginError] = React.useState(false);
-    const [loginErrorMsg, setLoginErrorMsg] = React.useState('');
+    const [loginError] = React.useState(false);
+    const [loginErrorMsg] = React.useState('');
     const [open, setOpen] = React.useState(false);
 
-    // const navigate = useNavigate();
-
-    let ws: WebSocket;
-
+    const {sendMessage} = useWebSocket();
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -88,51 +84,30 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         setOpen(false);
     };
 
+    const handleLogIn = (userinfo: string) => {
+        console.log("Trying to log-in: ", userinfo);
+
+        // Prepare the login message
+        const message = '{"UserLoginRequest":{' + userinfo + '}}';
+        console.log('Sending message to WebSocket: ', message);
+
+        // Send the login message via WebSocket
+        sendMessage(message);
+
+        // WebSocket response is handled in the WebSocketContext
+    };
+
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        console.log({
-            username: data.get('username'),
-            password: data.get('password'),
-        });
-        let username = data.get('username');
-        let password = data.get('password');
+        const username = data.get('username') as string;
+        const password = data.get('password') as string;
 
-        let userinfo: string = '"username":"' + username + '","password":"' + password + '"';
-        handleLogIn(userinfo);
-    };
-
-    const handleLogIn = async (userinfo: string) => {
-        console.log("Trying to log-in: ", userinfo);
-        ws = await WebSocket.connect('ws://192.168.80.222:5007/ws');
-
-        ws.addListener((msg) => {
-            console.log('Received Message:', msg);
-            try {
-                // Parse the JSON string received
-                const parsedData = JSON.parse(msg.data as string);
-
-                // Check if the login was not successful
-                if (parsedData.Success === false) {
-                    console.log('Login was not successful');
-                    setLoginError(true);
-                    setLoginErrorMsg('Could not log in.');
-                    console.log("Disconnecting from server.")
-                    ws.disconnect();
-                } else {
-                    console.log('Login was successful');
-                    setLoginError(false);
-                    setLoginErrorMsg('');
-                }
-            } catch (error) {
-                console.error('Failed to parse JSON message:', error);
-            }
-        });
-
-        // Step 3: Send a message to the server
-        let message = '{"UserLoginRequest":{' + userinfo + '}}';
-        console.log(message);
-        await ws.send(message);
+        // Validate inputs before sending
+        if (validateInputs()) {
+            const userinfo = `"Username":"${username}","Password":"${password}"`;
+            handleLogIn(userinfo);
+        }
     };
 
     const validateInputs = () => {
@@ -142,27 +117,23 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         let isValid = true;
 
         if (!username.value) {
-          setEmailError(true);
-          setEmailErrorMessage('Please enter a valid username.');
-          isValid = false;
+            setEmailError(true);
+            setEmailErrorMessage('Please enter a valid username.');
+            isValid = false;
         } else {
-          setEmailError(false);
-          setEmailErrorMessage('');
+            setEmailError(false);
+            setEmailErrorMessage('');
         }
 
-        if (!password.value || password.value.length < 6) {
-          setPasswordError(true);
-          setPasswordErrorMessage('Password must be at least 6 characters long.');
-          isValid = false;
+        if (!password.value) {
+            setPasswordError(true);
+            setPasswordErrorMessage('Password must be at least 6 characters long.');
+            isValid = false;
         } else {
-          setPasswordError(false);
-          setPasswordErrorMessage('');
+            setPasswordError(false);
+            setPasswordErrorMessage('');
         }
 
-        // if (isValid) {
-        //     navigate('/chat', {replace: true});
-        // }
-        // navigate('/chat', {replace: true});
         return isValid;
     };
 
@@ -268,19 +239,10 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                             type="submit"
                             fullWidth
                             variant="outlined"
-                            onClick={() => alert('Sign in with Google')}
-                            startIcon={<GoogleIcon/>}
+                            onClick={() => alert('Sign in with E-Mail')}
+                            startIcon={<Mail/>}
                         >
-                            Sign in with Google
-                        </Button>
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="outlined"
-                            onClick={() => alert('Sign in with Facebook')}
-                            startIcon={<FacebookIcon/>}
-                        >
-                            Sign in with Facebook
+                            Sign in with E-Mail
                         </Button>
                     </Box>
                 </Card>

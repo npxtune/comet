@@ -1,6 +1,7 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import SignIn from './SignIn';
 import ChatHomePage from "./ChatHomepage.tsx";
+import {WebSocketProvider} from './WebSocket.tsx';
 // import { blue } from '@mui/material/colors';
 // import { ThemeProvider, createTheme } from '@mui/material/styles';
 
@@ -19,14 +20,14 @@ function App() {
     // });
 
     return (
-        // <ThemeProvider theme={theme}>
-            <Router>
+        <Router>
+            <WebSocketProvider>
                 <Routes>
-                    <Route path="/" element={<SignIn />} /> {/* Set SignIn as the main page */}
-                    <Route path="chat" element={<ChatHomePage />} />
+                    <Route path="/" element={<SignIn/>}/> {/* Set SignIn as the main page */}
+                    <Route path="chat" element={<ChatHomePage/>}/>
                 </Routes>
-            </Router>
-        // </ThemeProvider>
+            </WebSocketProvider>
+        </Router>
     );
 }
 
