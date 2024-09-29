@@ -17,8 +17,26 @@ interface SignUpProps {
 
 export default function SignUp({ open, handleClose/*, validateInput*/ }: SignUpProps) {
 
-    const {sendMessage} = useWebSocket();
+    const {sendMessage, message} = useWebSocket();
     const [showSuccessAlert, setShowSuccessAlert] = React.useState(false);
+    const [showFailureAlert, setShowFailureAlert] = React.useState(false);
+
+    React.useEffect(() => {
+        if (message) {
+            const parsedMessage = JSON.parse(message);
+            if (parsedMessage.Success === true) {
+                setShowSuccessAlert(true);
+                setTimeout(() => {
+                    setShowSuccessAlert(false);
+                }, 3000);
+            } else if (parsedMessage.Success === false) {
+                setShowFailureAlert(true);
+                setTimeout(() => {
+                    setShowFailureAlert(false);
+                }, 3000);
+            }
+        }
+    }, [message]);
 
     const handleSignUp = (userinfo: string) => {
         console.log("Trying to SignUp: ", userinfo);
@@ -29,8 +47,6 @@ export default function SignUp({ open, handleClose/*, validateInput*/ }: SignUpP
 
         // Send the login message via WebSocket
         sendMessage(message);
-
-        setShowSuccessAlert(true);
 
         // WebSocket response is handled in the WebSocketContext
     };
@@ -70,6 +86,7 @@ export default function SignUp({ open, handleClose/*, validateInput*/ }: SignUpP
                 sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%' }}
             >
                 {showSuccessAlert && <Alert severity="success">You have successfully signed up!</Alert>}
+                {showFailureAlert && <Alert severity="error">You already signed up!</Alert>}
                 <DialogContentText>
                     Enter your account&apos;s email address.
                 </DialogContentText>

@@ -1,23 +1,20 @@
-// WebSocketContext.tsx
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 
-// Define types for WebSocket context
 interface WebSocketContextType {
     sendMessage: (message: string) => void;
     clientId: string | null;
+    message: string | null;
     disconnect: () => void;
 }
 
-// Create the WebSocket context
 const WebSocketContext = createContext<WebSocketContextType | undefined>(undefined);
 
-// WebSocket Provider Component
 export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [clientId, setClientId] = useState<string | null>(null);
+    const [message, setMessage] = useState<string | null>(null);
     const ws = useRef<WebSocket | null>(null);
 
     useEffect(() => {
-        // Open WebSocket connection on mount
         ws.current = new WebSocket('wss://thouchat.langrock.info/ws');
 
         ws.current.onopen = () => {
@@ -29,7 +26,12 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             console.log('WebSocket message received:', data);
 
             if (data.ClientId) {
-                setClientId(data.ClientId); // Assuming clientId is sent from the server
+                setClientId(data.ClientId);
+            }
+
+            if (data) {
+                console.log('Success:', data);
+                setMessage(event.data);
             }
         };
 
@@ -38,7 +40,6 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         };
 
         return () => {
-            // Clean up and close WebSocket when the provider unmounts
             if (ws.current) {
                 ws.current.close();
             }
@@ -62,13 +63,12 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
 
     return (
-        <WebSocketContext.Provider value={{ sendMessage, clientId, disconnect }}>
+        <WebSocketContext.Provider value={{ sendMessage, clientId, message, disconnect }}>
             {children}
         </WebSocketContext.Provider>
     );
 };
 
-// Custom hook to use the WebSocketContext
 export const useWebSocket = () => {
     const context = useContext(WebSocketContext);
     if (!context) {
