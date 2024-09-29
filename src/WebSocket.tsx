@@ -22,7 +22,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const messages = useMessages();
 
     const connectWebSocket = () => {
-        ws.current = new WebSocket('ws://192.168.80.222:5007/ws');
+        ws.current = new WebSocket('wss://thouchat.langrock.info:443/ws');
 
         ws.current.onopen = () => {
             console.log('WebSocket connected');
