@@ -6,16 +6,16 @@ import {MessageProvider} from './Messages.tsx';
 
 function App() {
     return (
-        <Router>
-            <MessageProvider>
-                <WebSocketProvider>  {/* Wrap the entire app */}
+        <MessageProvider>
+            <WebSocketProvider>  {/* Wrap the entire app */}
+                <Router>
                     <Routes>
                         <Route path="/" element={<SignIn/>}/> {/* Set SignIn as the main page */}
                         <Route path="chat" element={<ChatHomePage/>}/>
                     </Routes>
-                </WebSocketProvider>
-            </MessageProvider>
-        </Router>
+                </Router>
+            </WebSocketProvider>
+        </MessageProvider>
     );
 }
 
