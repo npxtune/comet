@@ -153,6 +153,13 @@ export default function ChatHomePage() {
                             type="text"
                             value={newMessage}
                             onChange={(e) => setNewMessage(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.defaultPrevented)  return;
+                                if (e.key === "Enter"){
+                                    handleSendMessage();
+                                    e.preventDefault();
+                                }
+                            }}
                             placeholder="Type your message..."
                             variant="outlined"
                             fullWidth
