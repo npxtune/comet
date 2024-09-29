@@ -2,11 +2,11 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
-import { styled } from '@mui/material/styles';
+import {styled} from '@mui/material/styles';
 import AppTheme from './AppTheme.tsx';
 import ChatSettings from "./ChatSettings.tsx";
 import Stack from "@mui/material/Stack";
-import { useWebSocket } from './WebSocket.tsx';
+import {useWebSocket} from './WebSocket.tsx';
 import {
     AppBar,
     List,
@@ -82,7 +82,7 @@ export default function ChatHomePage() {
     const navigate = useNavigate();
     const theme = useTheme();
 
-    const { sendMessage, disconnect, clientId } = useWebSocket();
+    const {sendMessage, disconnect, clientId} = useWebSocket();
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -95,7 +95,7 @@ export default function ChatHomePage() {
     const handleLogOut = () => {
         console.log("Disconnecting client...");
         disconnect();
-        navigate('/', { replace: true });
+        navigate('/', {replace: true});
     };
 
     const handleSendMessage = () => {
@@ -120,7 +120,8 @@ export default function ChatHomePage() {
                 <Sidebar>
                     <AppBar position="static">
                         <Toolbar>
-                            <Typography variant="h6" component="div" sx={{flexGrow: 1, color: (theme) => theme.palette.text.primary}}>
+                            <Typography variant="h6" component="div"
+                                        sx={{flexGrow: 1, color: (theme) => theme.palette.text.primary}}>
                                 Chats
                             </Typography>
                         </Toolbar>
@@ -161,34 +162,28 @@ export default function ChatHomePage() {
                 <ChatArea>
                     <AppBar position="static">
                         <Toolbar>
-                            <Typography variant="h6" component="div" sx={{flexGrow: 1, color: (theme) => theme.palette.text.primary}}>
+                            <Typography variant="h6" component="div"
+                                        sx={{flexGrow: 1, color: (theme) => theme.palette.text.primary}}>
                                 Chat Room
                             </Typography>
                         </Toolbar>
                     </AppBar>
-                    <MessageList>
-                        <Typography>
-                            {isShakespeare ? "Text mode is enabled." : "Hello, World! :)"}
-                        </Typography>
-                    </Toolbar>
-                </AppBar>
-                <MessageView/>
-                <MessageInput>
-                    <TextField
-                        type="text"
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="Type your message..."
-                        variant="outlined"
-                        fullWidth
-                    />
-                    <Button variant="contained" sx={{marginLeft: 1}} onClick={handleSendMessage}>
-                        <Send/>
-                    </Button>
-                </MessageInput>
-            </ChatArea>
-        </ChatContainer>
-</AppTheme>
-)
-    ;
+                    <MessageView/>
+                    <MessageInput>
+                        <TextField
+                            type="text"
+                            value={newMessage}
+                            onChange={(e) => setNewMessage(e.target.value)}
+                            placeholder="Type your message..."
+                            variant="outlined"
+                            fullWidth
+                        />
+                        <Button variant="contained" sx={{marginLeft: 1}} onClick={handleSendMessage}>
+                            <Send/>
+                        </Button>
+                    </MessageInput>
+                </ChatArea>
+            </ChatContainer>
+        </AppTheme>
+    );
 }
