@@ -214,7 +214,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                             label="Remember me"
                         />
                         <ForgotPassword open={openForPas} handleClose={() => handleClose(setOpenForPas)}/>
-                        <SignUp open={openSignUp} validateInput={validateInputs} handleClose={() => handleClose(setSignUp)}/>
+                        <SignUp open={openSignUp} /*validateInput={validateInputs}*/ handleClose={() => handleClose(setSignUp)}/>
                         <Button
                             type="submit"
                             fullWidth

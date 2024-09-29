@@ -11,10 +11,10 @@ import {useWebSocket} from "./WebSocket.tsx";
 interface SignUpProps {
     open: boolean;
     handleClose: () => void;
-    validateInput: () => boolean;
+    /*validateInput: () => boolean;*/
 }
 
-export default function SignUp({ open, handleClose, validateInput }: SignUpProps) {
+export default function SignUp({ open, handleClose/*, validateInput*/ }: SignUpProps) {
 
     const {sendMessage} = useWebSocket();
 
@@ -40,10 +40,11 @@ export default function SignUp({ open, handleClose, validateInput }: SignUpProps
             const password = data.get('password') as string;
 
             // Validate inputs before sending
-            if (validateInput()) {
+            /*if (validateInput()) {*/
+                console.log('Username: ', username, ' Password' , password);
                 const userinfo = `"Username":"${username}","Password":"${password}","DisplayName":"${username}"`;
                 handleSignUp(userinfo);
-            }
+            //}
         }
     };
 
