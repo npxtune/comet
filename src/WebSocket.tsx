@@ -1,5 +1,6 @@
 // WebSocketContext.tsx
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
+import { useMessages } from './Messages';
 
 // Define types for WebSocket context
 interface WebSocketContextType {
@@ -16,6 +17,8 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const [clientId, setClientId] = useState<string | null>(null);
     const ws = useRef<WebSocket | null>(null);
 
+    const messages = useMessages();
+
     useEffect(() => {
         // Open WebSocket connection on mount
         ws.current = new WebSocket('wss://thouchat.langrock.info/ws');
@@ -27,6 +30,10 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         ws.current.onmessage = (event) => {
             const data = JSON.parse(event.data);
             console.log('WebSocket message received:', data);
+
+            if (data.messages) {
+                messages.setMessages(data.messages);
+            }
 
             if (data.ClientId) {
                 setClientId(data.ClientId); // Assuming clientId is sent from the server
