@@ -6,7 +6,7 @@ import { styled } from '@mui/material/styles';
 import AppTheme from './AppTheme.tsx';
 import ChatSettings from "./ChatSettings.tsx";
 import Stack from "@mui/material/Stack";
-import { useWebSocket } from './WebSocket.tsx'; // Make sure this is set up correctly
+import { useWebSocket } from './WebSocket.tsx';
 import {
     AppBar,
     List,
@@ -15,12 +15,13 @@ import {
     ListItemIcon,
     ListItemText,
     Toolbar,
-    useTheme
+    useTheme,
+    Switch
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import {ChatBubble, Logout, Send, Settings} from "@mui/icons-material";
-import {useNavigate} from "react-router-dom";
+import { ChatBubble, Logout, Send, Settings } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 const ChatArea = styled(Box)(() => ({
     flexGrow: 1,
@@ -81,10 +82,11 @@ const ChatContainer = styled(Stack)(({theme}) => ({
 export default function ChatHomePage() {
     const [newMessage, setNewMessage] = React.useState('');
     const [open, setOpen] = React.useState(false);
+    const [isShakespeare, setIsShakespeare] = React.useState(false); // Boolean state for text mode
     const navigate = useNavigate();
     const theme = useTheme();
 
-    const { sendMessage, disconnect, clientId } = useWebSocket(); // Assuming useWebSocket returns a disconnect function
+    const { sendMessage, disconnect, clientId } = useWebSocket();
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -96,21 +98,22 @@ export default function ChatHomePage() {
 
     const handleLogOut = () => {
         console.log("Disconnecting client...");
-        disconnect(); // Ensure you call the disconnect function to close the WebSocket
-        navigate('/', { replace: true }); // Navigate to the home page
+        disconnect();
+        navigate('/', { replace: true });
     };
 
     const handleSendMessage = () => {
         if (newMessage.trim() !== '') {
             const messageToSend = JSON.stringify({
                 MessageSendRequest: {
-                    RoomId: 1,  // Example Room ID
+                    RoomId: 1,
                     Text: newMessage,
-                    ClientId: clientId
+                    ClientId: clientId,
+                    IsShakespeare: isShakespeare
                 }
             });
-            sendMessage(messageToSend);  // Use the sendMessage from the WebSocket context
-            setNewMessage('');  // Clear the input after sending
+            sendMessage(messageToSend);
+            setNewMessage('');
         }
     };
 
@@ -121,71 +124,72 @@ export default function ChatHomePage() {
                 <Sidebar>
                     <AppBar position="static">
                         <Toolbar>
-                            <Typography variant="h6" component="div"
-                                        sx={{flexGrow: 1, color: (theme) => theme.palette.text.primary}}>
+                            <Typography variant="h6" component="div" sx={{flexGrow: 1, color: (theme) => theme.palette.text.primary}}>
                                 Chats
                             </Typography>
                         </Toolbar>
                     </AppBar>
-                    <Box padding={theme.spacing(1)}
-                         display='flex'
-                         flexDirection='column'
-                         flexGrow={1}>
-                    <List>
-                        <ListItem key="1" disablePadding>
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    <ChatBubble/>
-                                </ListItemIcon>
-                                <ListItemText primary="Chat 1"/>
-                            </ListItemButton>
-                        </ListItem>
-                        {/* Add more chats as needed */}
-                    </List>
-                    <SettingsButtonContainer>
-                        <Button variant="outlined" sx={{marginLeft: 1}} onClick={handleClickOpen}>
-                            <Settings/>
-                        </Button>
-                        <ChatSettings open={open} handleClose={handleClose}/>
-                        <Box sx={{marginLeft: 2, marginRight: 2}}/>
-                        <Button variant="outlined" sx={{marginLeft: 1, color: 'red'}} onClick={handleLogOut}>
-                            <Logout/>
-                        </Button>
-                    </SettingsButtonContainer>
+                    <Box padding={theme.spacing(1)} display='flex' flexDirection='column' flexGrow={1}>
+                        <List>
+                            <ListItem key="1" disablePadding>
+                                <ListItemButton>
+                                    <ListItemIcon>
+                                        <ChatBubble/>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Chat 1"/>
+                                </ListItemButton>
+                            </ListItem>
+                        </List>
+                        <SettingsButtonContainer>
+                            <Button variant="outlined" sx={{marginLeft: 1}} onClick={handleClickOpen}>
+                                <Settings/>
+                            </Button>
+                            <ChatSettings open={open} handleClose={handleClose}/>
+                            <Box sx={{marginLeft: 2, marginRight: 2}}/>
+                            <Button variant="outlined" sx={{marginLeft: 1, color: 'red'}} onClick={handleLogOut}>
+                                <Logout/>
+                            </Button>
+                        </SettingsButtonContainer>
+                        {/* Text Mode Toggle */}
+                        <Box display="flex" alignItems="center" justifyContent="center" mt={2}>
+                            <Typography variant="body1">Shakespeare</Typography>
+                            <Switch
+                                checked={isShakespeare}
+                                onChange={(e) => setIsShakespeare(e.target.checked)}
+                                color="primary"
+                            />
+                        </Box>
+                    </Box>
+                </Sidebar>
 
-                </Box>
-            </Sidebar>
-
-            <ChatArea>
-                <AppBar position="static">
-                    <Toolbar>
-                        <Typography variant="h6" component="div"
-                                    sx={{flexGrow: 1, color: (theme) => theme.palette.text.primary}}>
-                            Chat Room
+                <ChatArea>
+                    <AppBar position="static">
+                        <Toolbar>
+                            <Typography variant="h6" component="div" sx={{flexGrow: 1, color: (theme) => theme.palette.text.primary}}>
+                                Chat Room
+                            </Typography>
+                        </Toolbar>
+                    </AppBar>
+                    <MessageList>
+                        <Typography>
+                            {isShakespeare ? "Text mode is enabled." : "Hello, World! :)"}
                         </Typography>
-                    </Toolbar>
-                </AppBar>
-                <MessageList>
-                    <Typography>
-                        Hello, World! :)
-                    </Typography>
-                </MessageList>
-                <MessageInput>
-                    <TextField
-                        type="text"
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="Type your message..."
-                        variant="outlined"
-                        fullWidth
-                    />
-                    <Button variant="contained" sx={{marginLeft: 1}} onClick={handleSendMessage}>
-                        <Send/>
-                    </Button>
-                </MessageInput>
-            </ChatArea>
-        </ChatContainer>
-</AppTheme>
-)
-    ;
+                    </MessageList>
+                    <MessageInput>
+                        <TextField
+                            type="text"
+                            value={newMessage}
+                            onChange={(e) => setNewMessage(e.target.value)}
+                            placeholder="Type your message..."
+                            variant="outlined"
+                            fullWidth
+                        />
+                        <Button variant="contained" sx={{marginLeft: 1}} onClick={handleSendMessage}>
+                            <Send/>
+                        </Button>
+                    </MessageInput>
+                </ChatArea>
+            </ChatContainer>
+        </AppTheme>
+    );
 }

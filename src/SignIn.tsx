@@ -149,7 +149,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             <SignInContainer direction="column" justifyContent="space-between">
                 <ColorModeSelect sx={{position: 'fixed', top: '1rem', right: '1rem'}}/>
                 <Card variant="outlined">
-                    <Typography>CHAT APP DING</Typography>
+                    <Typography>THOU TALK</Typography>
                     <Typography
                         component="h1"
                         variant="h4"
