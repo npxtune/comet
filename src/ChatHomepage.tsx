@@ -20,8 +20,9 @@ import {
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import { ChatBubble, Logout, Send, Settings } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import {ChatBubble, Logout, Send, Settings} from "@mui/icons-material";
+import {useNavigate} from "react-router-dom";
+import MessageView from "./MessageView.tsx";
 
 const ChatArea = styled(Box)(() => ({
     flexGrow: 1,
@@ -39,11 +40,6 @@ const MessageInput = styled(Box)(({theme}) => ({
     paddingBottom: theme.spacing(2),
 }));
 
-const MessageList = styled(Box)(({theme}) => ({
-    flexGrow: 1,
-    overflowY: 'auto',
-    padding: theme.spacing(3),
-}));
 
 const Sidebar = styled(Box)(({theme}) => ({
     width: '250px',
@@ -174,22 +170,25 @@ export default function ChatHomePage() {
                         <Typography>
                             {isShakespeare ? "Text mode is enabled." : "Hello, World! :)"}
                         </Typography>
-                    </MessageList>
-                    <MessageInput>
-                        <TextField
-                            type="text"
-                            value={newMessage}
-                            onChange={(e) => setNewMessage(e.target.value)}
-                            placeholder="Type your message..."
-                            variant="outlined"
-                            fullWidth
-                        />
-                        <Button variant="contained" sx={{marginLeft: 1}} onClick={handleSendMessage}>
-                            <Send/>
-                        </Button>
-                    </MessageInput>
-                </ChatArea>
-            </ChatContainer>
-        </AppTheme>
-    );
+                    </Toolbar>
+                </AppBar>
+                <MessageView/>
+                <MessageInput>
+                    <TextField
+                        type="text"
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        placeholder="Type your message..."
+                        variant="outlined"
+                        fullWidth
+                    />
+                    <Button variant="contained" sx={{marginLeft: 1}} onClick={handleSendMessage}>
+                        <Send/>
+                    </Button>
+                </MessageInput>
+            </ChatArea>
+        </ChatContainer>
+</AppTheme>
+)
+    ;
 }
