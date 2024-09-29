@@ -6,7 +6,7 @@ import { styled } from '@mui/material/styles';
 import AppTheme from './AppTheme.tsx';
 import ChatSettings from "./ChatSettings.tsx";
 import Stack from "@mui/material/Stack";
-import { useWebSocket } from './WebSocket.tsx'; // Make sure this is set up correctly
+import { useWebSocket } from './WebSocket.tsx'; // Ensure this is set up correctly
 import {
     AppBar,
     List,
@@ -81,8 +81,7 @@ export default function ChatHomePage() {
     const [open, setOpen] = React.useState(false);
     const navigate = useNavigate();
 
-    // Assuming useWebSocket returns a sendMessage function and is connected
-    const { sendMessage } = useWebSocket();
+    const { sendMessage, disconnect, clientId } = useWebSocket(); // Assuming useWebSocket returns a disconnect function
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -94,12 +93,20 @@ export default function ChatHomePage() {
 
     const handleLogOut = () => {
         console.log("Disconnecting client...");
-        navigate('/', { replace: true });
+        disconnect(); // Ensure you call the disconnect function to close the WebSocket
+        navigate('/', { replace: true }); // Navigate to the home page
     };
 
     const handleSendMessage = () => {
         if (newMessage.trim() !== '') {
-            sendMessage(newMessage);  // Send the message using the WebSocket
+            const messageToSend = JSON.stringify({
+                MessageSendRequest: {
+                    RoomId: 1,  // Example Room ID
+                    Text: newMessage,
+                    ClientId: clientId
+                }
+            });
+            sendMessage(messageToSend);  // Use the sendMessage from the WebSocket context
             setNewMessage('');  // Clear the input after sending
         }
     };

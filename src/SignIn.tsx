@@ -19,6 +19,7 @@ import ColorModeSelect from './ColorModeSelect.tsx';
 import {useWebSocket} from './WebSocket.tsx';
 import {Mail} from "@mui/icons-material";
 import SignUp from "./SignUp.tsx";
+import { useNavigate } from 'react-router-dom';
 
 const Card = styled(MuiCard)(({theme}) => ({
     display: 'flex',
@@ -76,7 +77,9 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     const [openForPas, setOpenForPas] = React.useState(false);
     const [openSignUp, setSignUp] = React.useState(false);
 
+    const navigate = useNavigate();
     const {sendMessage} = useWebSocket();
+
 
     const handleClickOpen = (setOpen: React.Dispatch<React.SetStateAction<boolean>>) => {
         setOpen(true);
@@ -97,6 +100,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         sendMessage(message);
 
         // WebSocket response is handled in the WebSocketContext
+        navigate('/chat', { replace: true });  // Navigate to the home page
     };
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
