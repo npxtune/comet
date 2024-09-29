@@ -7,6 +7,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import {useWebSocket} from "./WebSocket.tsx";
+import {Alert} from "@mui/material";
 
 interface SignUpProps {
     open: boolean;
@@ -17,6 +18,7 @@ interface SignUpProps {
 export default function SignUp({ open, handleClose/*, validateInput*/ }: SignUpProps) {
 
     const {sendMessage} = useWebSocket();
+    const [showSuccessAlert, setShowSuccessAlert] = React.useState(false);
 
     const handleSignUp = (userinfo: string) => {
         console.log("Trying to SignUp: ", userinfo);
@@ -27,6 +29,8 @@ export default function SignUp({ open, handleClose/*, validateInput*/ }: SignUpP
 
         // Send the login message via WebSocket
         sendMessage(message);
+
+        setShowSuccessAlert(true);
 
         // WebSocket response is handled in the WebSocketContext
     };
@@ -65,6 +69,7 @@ export default function SignUp({ open, handleClose/*, validateInput*/ }: SignUpP
             <DialogContent
                 sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%' }}
             >
+                {showSuccessAlert && <Alert severity="success">You have successfully signed up!</Alert>}
                 <DialogContentText>
                     Enter your account&apos;s email address.
                 </DialogContentText>
