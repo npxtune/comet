@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import WebSocket from '@tauri-apps/plugin-websocket';
+import { useMessages } from './Messages';
 
 interface WebSocketContextProps {
     ws: WebSocket | null;
@@ -19,11 +20,12 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const wsRef = useRef<WebSocket | null>(null);
 
     const navigate = useNavigate();
+    const messages = useMessages();
 
     useEffect(() => {
         const setupWebSocket = async () => {
             try {
-                const websocket = await WebSocket.connect('ws://192.168.80.222:5007/ws');
+                const websocket = await WebSocket.connect('wss://thouchat.langrock.info/ws');
                 wsRef.current = websocket;
                 setWs(websocket);
 
@@ -32,16 +34,21 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                     try {
                         const parsedData = JSON.parse(msg.data as string);
 
-                        if (parsedData.Success === false) {
-                            console.log('Login was not successful');
-                            setLoginError(true);
-                            setLoginErrorMsg('Could not log in.');
+                        if (parsedData.messages) {
+                            messages.setMessages(parsedData.messages);
                         } else {
-                            console.log('Login was successful');
-                            setLoginError(false);
-                            setLoginErrorMsg('');
-                            navigate('/chat', { replace: true });
+                            if (parsedData.Success === false) {
+                                console.log('Login was not successful');
+                                setLoginError(true);
+                                setLoginErrorMsg('Could not log in.');
+                            } else {
+                                console.log('Login was successful');
+                                setLoginError(false);
+                                setLoginErrorMsg('');
+                                navigate('/chat', { replace: true });
+                            }
                         }
+
                     } catch (error) {
                         console.error('Failed to parse JSON message:', error);
                     }

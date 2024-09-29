@@ -20,6 +20,7 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import { ChatBubble, Logout, Send, Settings } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import MessageView from "./MessageView.tsx";
 
 const ChatArea = styled(Box)(({ theme }) => ({
     flexGrow: 1,
@@ -35,11 +36,6 @@ const MessageInput = styled(Box)(({ theme }) => ({
     padding: theme.spacing(1),
 }));
 
-const MessageList = styled(Box)(({ theme }) => ({
-    flexGrow: 1,
-    overflowY: 'auto',
-    padding: theme.spacing(1),
-}));
 
 const Sidebar = styled(Box)(({ theme }) => ({
     width: '250px',
@@ -98,8 +94,15 @@ export default function ChatHomePage() {
     };
 
     const handleSendMessage = () => {
-        if (newMessage.trim() !== '') {
-            sendMessage(newMessage);  // Send the message using the WebSocket
+        const message = newMessage.trim();
+        if (message !== '') {
+            const request = {
+                "MessageSendRequest": {
+                    "RoomId": 69,
+                    "Text": message
+                }
+            };
+            sendMessage(JSON.stringify(request));  // Send the message using the WebSocket
             setNewMessage('');  // Clear the input after sending
         }
     };
@@ -143,11 +146,7 @@ export default function ChatHomePage() {
                             </Typography>
                         </Toolbar>
                     </AppBar>
-                    <MessageList>
-                        <Typography>
-                            Hello, World! :)
-                        </Typography>
-                    </MessageList>
+                    <MessageView/>
                     <MessageInput>
                         <TextField
                             type="text"
