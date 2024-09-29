@@ -1,87 +1,75 @@
 // WebSocketContext.tsx
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import WebSocket from '@tauri-apps/plugin-websocket';
-import { useMessages } from './Messages';
 
-interface WebSocketContextProps {
-    ws: WebSocket | null;
+// Define types for WebSocket context
+interface WebSocketContextType {
     sendMessage: (message: string) => void;
-    loginError: boolean;
-    loginErrorMsg: string;
+    clientId: string | null;
+    disconnect: () => void;
 }
 
-const WebSocketContext = createContext<WebSocketContextProps | undefined>(undefined);
+// Create the WebSocket context
+const WebSocketContext = createContext<WebSocketContextType | undefined>(undefined);
 
+// WebSocket Provider Component
 export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [ws, setWs] = useState<WebSocket | null>(null);
-    const [loginError, setLoginError] = useState(false);
-    const [loginErrorMsg, setLoginErrorMsg] = useState('');
-    const wsRef = useRef<WebSocket | null>(null);
-
-    const navigate = useNavigate();
-    const messages = useMessages();
+    const [clientId, setClientId] = useState<string | null>(null);
+    const ws = useRef<WebSocket | null>(null);
 
     useEffect(() => {
-        const setupWebSocket = async () => {
-            try {
-                const websocket = await WebSocket.connect('wss://thouchat.langrock.info/ws');
-                wsRef.current = websocket;
-                setWs(websocket);
+        // Open WebSocket connection on mount
+        ws.current = new WebSocket('wss://thouchat.langrock.info/ws');
 
-                websocket.addListener((msg) => {
-                    console.log('Received WebSocket Message:', msg);
-                    try {
-                        const parsedData = JSON.parse(msg.data as string);
+        ws.current.onopen = () => {
+            console.log('WebSocket connected');
+        };
 
-                        if (parsedData.messages) {
-                            messages.setMessages(parsedData.messages);
-                        } else {
-                            if (parsedData.Success === false) {
-                                console.log('Login was not successful');
-                                setLoginError(true);
-                                setLoginErrorMsg('Could not log in.');
-                            } else {
-                                console.log('Login was successful');
-                                setLoginError(false);
-                                setLoginErrorMsg('');
-                                navigate('/chat', { replace: true });
-                            }
-                        }
+        ws.current.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            console.log('WebSocket message received:', data);
 
-                    } catch (error) {
-                        console.error('Failed to parse JSON message:', error);
-                    }
-                });
-            } catch (error) {
-                console.error('WebSocket Error:', error);
+            if (data.ClientId) {
+                setClientId(data.ClientId); // Assuming clientId is sent from the server
             }
         };
 
-        setupWebSocket();
+        ws.current.onclose = () => {
+            console.log('WebSocket disconnected');
+        };
 
         return () => {
-            // Do not disconnect here if you want the connection to persist.
-            // wsRef.current?.disconnect();
+            // Clean up and close WebSocket when the provider unmounts
+            if (ws.current) {
+                ws.current.close();
+            }
         };
-    }, [navigate]);
+    }, []);
 
-    const sendMessage = async (message: string) => {
-        if (wsRef.current) {
-            await wsRef.current.send(message);
+    const sendMessage = (message: string) => {
+        if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+            ws.current.send(message);
         } else {
-            console.error('WebSocket is not connected');
+            console.error('WebSocket is not open');
+        }
+    };
+
+    const disconnect = () => {
+        if (ws.current) {
+            ws.current.close();
+            ws.current = null;
+            console.log('WebSocket disconnected');
         }
     };
 
     return (
-        <WebSocketContext.Provider value={{ ws, sendMessage, loginError, loginErrorMsg }}>
+        <WebSocketContext.Provider value={{ sendMessage, clientId, disconnect }}>
             {children}
         </WebSocketContext.Provider>
     );
 };
 
-export const useWebSocket = (): WebSocketContextProps => {
+// Custom hook to use the WebSocketContext
+export const useWebSocket = () => {
     const context = useContext(WebSocketContext);
     if (!context) {
         throw new Error('useWebSocket must be used within a WebSocketProvider');

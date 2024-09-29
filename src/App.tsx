@@ -8,7 +8,7 @@ function App() {
     return (
         <Router>
             <MessageProvider>
-                <WebSocketProvider>
+                <WebSocketProvider>  {/* Wrap the entire app */}
                     <Routes>
                         <Route path="/" element={<SignIn/>}/> {/* Set SignIn as the main page */}
                         <Route path="chat" element={<ChatHomePage/>}/>
