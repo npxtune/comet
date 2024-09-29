@@ -247,7 +247,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                             type="submit"
                             fullWidth
                             variant="outlined"
-                            onClick={() => alert('Sign in with E-Mail')}
+                            onClick={() => handleClickOpen(setSignUp)}
                             startIcon={<Mail/>}
                         >
                             Sign in with E-Mail
