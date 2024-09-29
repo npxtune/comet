@@ -97,7 +97,7 @@ export default function ChatHomePage() {
     const handleLogOut = () => {
         console.log("Disconnecting client...");
         disconnect(); // Ensure you call the disconnect function to close the WebSocket
-        navigate('/', {replace: true}); // Navigate to the home page
+        navigate('/', { replace: true }); // Navigate to the home page
     };
 
     const handleSendMessage = () => {
