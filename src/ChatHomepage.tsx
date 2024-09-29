@@ -6,7 +6,7 @@ import { styled } from '@mui/material/styles';
 import AppTheme from './AppTheme.tsx';
 import ChatSettings from "./ChatSettings.tsx";
 import Stack from "@mui/material/Stack";
-import { useWebSocket } from './WebSocket.tsx'; // Ensure this is set up correctly
+import { useWebSocket } from './WebSocket.tsx'; // Make sure this is set up correctly
 import {
     AppBar,
     List,
@@ -14,49 +14,51 @@ import {
     ListItemButton,
     ListItemIcon,
     ListItemText,
-    Toolbar
+    Toolbar,
+    useTheme
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import { ChatBubble, Logout, Send, Settings } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import {ChatBubble, Logout, Send, Settings} from "@mui/icons-material";
+import {useNavigate} from "react-router-dom";
 
-const ChatArea = styled(Box)(({ theme }) => ({
+const ChatArea = styled(Box)(() => ({
     flexGrow: 1,
     display: 'flex',
     flexDirection: 'column',
-    padding: theme.spacing(2),
 }));
 
-const MessageInput = styled(Box)(({ theme }) => ({
+const MessageInput = styled(Box)(({theme}) => ({
     display: 'flex',
     alignItems: 'center',
     borderTop: `1px solid ${theme.palette.divider}`,
-    padding: theme.spacing(1),
+    paddingLeft: theme.spacing(3),
+    paddingRight: theme.spacing(3),
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
 }));
 
-const MessageList = styled(Box)(({ theme }) => ({
+const MessageList = styled(Box)(({theme}) => ({
     flexGrow: 1,
     overflowY: 'auto',
-    padding: theme.spacing(1),
+    padding: theme.spacing(3),
 }));
 
-const Sidebar = styled(Box)(({ theme }) => ({
+const Sidebar = styled(Box)(({theme}) => ({
     width: '250px',
     borderRight: `1px solid ${theme.palette.divider}`,
     display: 'flex',
     flexDirection: 'column',
-    padding: theme.spacing(2)
 }));
 
-const SettingsButtonContainer = styled(Box)(({ theme }) => ({
+const SettingsButtonContainer = styled(Box)(({theme}) => ({
     display: 'flex',
     justifyContent: 'center',
     padding: theme.spacing(1),
     marginTop: 'auto',
 }));
 
-const ChatContainer = styled(Stack)(({ theme }) => ({
+const ChatContainer = styled(Stack)(({theme}) => ({
     display: 'flex',
     flexDirection: 'row',
     height: '100vh',
@@ -80,6 +82,7 @@ export default function ChatHomePage() {
     const [newMessage, setNewMessage] = React.useState('');
     const [open, setOpen] = React.useState(false);
     const navigate = useNavigate();
+    const theme = useTheme();
 
     const { sendMessage, disconnect, clientId } = useWebSocket(); // Assuming useWebSocket returns a disconnect function
 
@@ -113,63 +116,76 @@ export default function ChatHomePage() {
 
     return (
         <AppTheme>
-            <CssBaseline enableColorScheme />
+            <CssBaseline enableColorScheme/>
             <ChatContainer>
-                <Sidebar marginTop={2}>
-                    <Typography variant="h6" component="div" sx={{ mb: 2 }}>
-                        Chats
-                    </Typography>
+                <Sidebar>
+                    <AppBar position="static">
+                        <Toolbar>
+                            <Typography variant="h6" component="div"
+                                        sx={{flexGrow: 1, color: (theme) => theme.palette.text.primary}}>
+                                Chats
+                            </Typography>
+                        </Toolbar>
+                    </AppBar>
+                    <Box padding={theme.spacing(1)}
+                         display='flex'
+                         flexDirection='column'
+                         flexGrow={1}>
                     <List>
                         <ListItem key="1" disablePadding>
                             <ListItemButton>
                                 <ListItemIcon>
-                                    <ChatBubble />
+                                    <ChatBubble/>
                                 </ListItemIcon>
-                                <ListItemText primary="Chat 1" />
+                                <ListItemText primary="Chat 1"/>
                             </ListItemButton>
                         </ListItem>
                         {/* Add more chats as needed */}
                     </List>
                     <SettingsButtonContainer>
-                        <Button variant="outlined" sx={{ marginLeft: 1 }} onClick={handleClickOpen}>
-                            <Settings />
+                        <Button variant="outlined" sx={{marginLeft: 1}} onClick={handleClickOpen}>
+                            <Settings/>
                         </Button>
-                        <ChatSettings open={open} handleClose={handleClose} />
-                        <Box sx={{ marginLeft: 2, marginRight: 2 }} />
-                        <Button variant="outlined" sx={{ marginLeft: 1, color: 'red' }} onClick={handleLogOut}>
-                            <Logout />
+                        <ChatSettings open={open} handleClose={handleClose}/>
+                        <Box sx={{marginLeft: 2, marginRight: 2}}/>
+                        <Button variant="outlined" sx={{marginLeft: 1, color: 'red'}} onClick={handleLogOut}>
+                            <Logout/>
                         </Button>
                     </SettingsButtonContainer>
-                </Sidebar>
 
-                <ChatArea>
-                    <AppBar position="static">
-                        <Toolbar>
-                            <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: (theme) => theme.palette.text.primary }}>
-                                Chat Room
-                            </Typography>
-                        </Toolbar>
-                    </AppBar>
-                    <MessageList>
-                        <Typography>
-                            Hello, World! :)
+                </Box>
+            </Sidebar>
+
+            <ChatArea>
+                <AppBar position="static">
+                    <Toolbar>
+                        <Typography variant="h6" component="div"
+                                    sx={{flexGrow: 1, color: (theme) => theme.palette.text.primary}}>
+                            Chat Room
                         </Typography>
-                    </MessageList>
-                    <MessageInput>
-                        <TextField
-                            type="text"
-                            value={newMessage}
-                            onChange={(e) => setNewMessage(e.target.value)}
-                            placeholder="Type your message..."
-                            variant="outlined"
-                            fullWidth
-                        />
-                        <Button variant="contained" sx={{ marginLeft: 1 }} onClick={handleSendMessage}>
-                            <Send />
-                        </Button>
-                    </MessageInput>
-                </ChatArea>
-            </ChatContainer>
-        </AppTheme>
-    );
+                    </Toolbar>
+                </AppBar>
+                <MessageList>
+                    <Typography>
+                        Hello, World! :)
+                    </Typography>
+                </MessageList>
+                <MessageInput>
+                    <TextField
+                        type="text"
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        placeholder="Type your message..."
+                        variant="outlined"
+                        fullWidth
+                    />
+                    <Button variant="contained" sx={{marginLeft: 1}} onClick={handleSendMessage}>
+                        <Send/>
+                    </Button>
+                </MessageInput>
+            </ChatArea>
+        </ChatContainer>
+</AppTheme>
+)
+    ;
 }
