@@ -20,7 +20,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self' ws: wss:"
+      "csp": null
     }
   },
   "bundle": {
