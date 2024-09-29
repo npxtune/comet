@@ -28,6 +28,7 @@ const ChatArea = styled(Box)(() => ({
     flexGrow: 1,
     display: 'flex',
     flexDirection: 'column',
+    width: 100
 }));
 
 const MessageInput = styled(Box)(({theme}) => ({

@@ -26,6 +26,7 @@ export default function Message(message: MessageModel) {
                 paddingTop: theme.spacing(1),
                 paddingBottom: theme.spacing(1),
             }}>
+            <Box><Typography>      </Typography></Box>
             <Avatar sx={{bgColor: colors[message.SenderId % colors.length]}}>{message.SenderId.toString()}</Avatar>
             <Box flexDirection="column">
                 <Typography variant="subtitle2">Nutzer {message.SenderId.toString()}</Typography>
